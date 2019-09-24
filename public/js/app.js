@@ -17,13 +17,24 @@ firebase.auth().onAuthStateChanged(user => {
     if (user) {
         if (location.pathname == '/login.html') {
             window.location.pathname = '/index.html'
+
         }
+        var idUsuario = user.uid
+
+        firebase.database().ref('users/' + idUsuario).set({
+            username: user.displayName,
+            email: user.email,
+            profile_picture: user.photoURL
+        });
+
+        console.log(user);
+
     }
     else {
         if (location.pathname != '/login.html') {
-            debugger                
+            debugger
             window.location.pathname = '/login.html'
-            
+
         }
     }
 })
