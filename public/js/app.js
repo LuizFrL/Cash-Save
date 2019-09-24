@@ -19,6 +19,7 @@ firebase.auth().onAuthStateChanged(user => {
             window.location.pathname = '/index.html'
 
         }
+
         var idUsuario = user.uid
 
         firebase.database().ref('users/' + idUsuario).set({
@@ -26,8 +27,6 @@ firebase.auth().onAuthStateChanged(user => {
             email: user.email,
             profile_picture: user.photoURL
         });
-
-        console.log(user);
 
     }
     else {
