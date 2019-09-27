@@ -10,7 +10,7 @@ evniar.click(function () {
 
 
     form.each(function () {
-        var input = $(this)
+        var input = $(this) 
         if (input.val() == '') {
             input.addClass('border border-danger')
         } else {
@@ -18,7 +18,6 @@ evniar.click(function () {
             data[input.data("firebase")] = input.val()
         }
     })
-
     if (Object.keys(data).length == 5) {
         firebase.database().ref("/usuarios/" + user + "/gastos").push(data)
             .catch(error => {
