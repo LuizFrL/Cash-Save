@@ -6,9 +6,7 @@ Chart.defaults.global.defaultFontColor = '#292b2c';
 
 
 
-
-
-function graficoIndex(gastos_dia) {
+function graficoIndex() {
     var ctx = $("#grafico-linear");
     var chart = new Chart(ctx, {
         type: 'line',
@@ -26,7 +24,7 @@ function graficoIndex(gastos_dia) {
                 pointHoverBackgroundColor: "rgba(2,117,216,1)",
                 pointHitRadius: 50,
                 pointBorderWidth: 2,
-                data: gastos_dia,
+                data: [0, 0, 0, 0, 0, 0, 0],
             }],
         },
         options: {

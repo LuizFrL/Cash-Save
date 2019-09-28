@@ -1,7 +1,5 @@
 var evniar = $("#encaminhar")
 
-
-
 evniar.click(function () {
     var form = $(".compra")
     var user = firebase.auth().currentUser.uid;
