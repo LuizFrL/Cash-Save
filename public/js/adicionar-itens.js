@@ -17,6 +17,7 @@ evniar.click(function () {
         }
     })
     if (Object.keys(data).length == 5) {
+        data['time'] = timeStampDate($("#dia").val())
         firebase.database().ref("/usuarios/" + user + "/gastos").push(data)
             .catch(error => {
                 console.log(error);
@@ -39,3 +40,10 @@ evniar.click(function () {
 
 
 })
+
+function timeStampDate(data){
+    var date = data.split("-");
+    var novaData = date[1] + '/' + date[2] + '/' + date[0]
+    var time = new Date(novaData).getTime()
+    return time
+}
