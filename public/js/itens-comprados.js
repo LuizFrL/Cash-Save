@@ -9,7 +9,7 @@ function adicionarGastos(tabela) {
             firebase.database().ref("/usuarios/" + user.uid + "/gastos").on("child_added", function (snapshot) {
                 var data = snapshot.val();
                 var dia_Semana = diasSemana(data.data)
-                
+
                 dias_gastos[dia_Semana] += Number(data.valor)
                 gIndex.data.datasets[0].data = dias_gastos
                 gIndex.update()
