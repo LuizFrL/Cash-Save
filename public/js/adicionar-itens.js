@@ -8,7 +8,7 @@ evniar.click(function () {
 
 
     form.each(function () {
-        var input = $(this) 
+        var input = $(this)
         if (input.val() == '') {
             input.addClass('border border-danger')
         } else {
@@ -18,6 +18,13 @@ evniar.click(function () {
     })
     if (Object.keys(data).length == 5) {
         data['time'] = timeStampDate($("#dia").val())
+        var now = new Date();
+        data["envio"] = {
+            data: now.toLocaleString(),
+            timeStamp : now.getTime() 
+        }
+        console.log(data);
+        
         firebase.database().ref("/usuarios/" + user + "/gastos").push(data)
             .catch(error => {
                 console.log(error);
@@ -41,7 +48,7 @@ evniar.click(function () {
 
 })
 
-function timeStampDate(data){
+function timeStampDate(data) {
     var date = data.split("-");
     var novaData = date[1] + '/' + date[2] + '/' + date[0]
     var time = new Date(novaData).getTime()
