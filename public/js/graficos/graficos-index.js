@@ -44,8 +44,8 @@ function graficoIndex() {
                     ticks: {
                         min: 0,
                         max: 300,
-                        maxTicksLimit: 30
-                    },
+                        maxTicksLimit: 300  
+                    },  
                     gridLines: {
                         color: "rgba(0, 0, 0, .125)",
                     }
@@ -57,14 +57,4 @@ function graficoIndex() {
         }
     });
     return chart
-}
-
-function diasSemana(string_data) {
-    // var semana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sabado"];
-    var arr = string_data.split("-");
-    var teste = new Date(arr[0], arr[1] - 1, arr[2]);
-    var dia = teste.getDay();
-    // return semana[dia]
-    return dia
-
 }
