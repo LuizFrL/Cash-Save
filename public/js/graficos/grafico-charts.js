@@ -1,28 +1,29 @@
 var g_Linha = grafico_linear()
 
-firebase.auth().onAuthStateChanged(function (user) {
-    if (user) {
-        var meses = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
-        firebase.database().ref("/usuarios/" + user.uid + "/gastos").on("child_added", function (snapshot) {
-            var item = snapshot.val();
-
-            var dataItem = new Date(item.time);
-
-            var dataAtual = new Date();
-
-            if (dataItem.getFullYear() == dataAtual.getFullYear()) {
-                meses[dataItem.getMonth()] += Number(item.valor)
-                g_Linha.data.datasets[0].data = meses
-                g_Linha.update()
-            }
-        })
+var g_Barras = grafico_barras()
+function carregarTabelas() {
 
 
-    }
-});
 
+    firebase.auth().onAuthStateChanged(function (user) {
+        if (user) {
+            firebase.database().ref("/usuarios/" + user.uid + "/gastos").on("child_added", function (snapshot) {
+                var item = snapshot.val();
+                atualizaG_linear(g_Linha, item)
 
+                atualizaG_barras(g_Barras, item)
+
+            })
+            
+            var tabelas = $(".atualizacao-tabela")
+            tabelas.each(function () {
+                $(this).text("Ultima Atualização: " + moment().format("D/M/Y, h:mm:ss a"));
+            });
+            
+        }
+    });
+
+}
 
 function grafico_linear() {
     var grafico_linha = $("#grafico-linear")
@@ -42,7 +43,7 @@ function grafico_linear() {
                 pointHoverBackgroundColor: "rgba(2,117,216,1)",
                 pointHitRadius: 50,
                 pointBorderWidth: 2,
-                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             }],
         },
         options: {
@@ -76,4 +77,88 @@ function grafico_linear() {
     });
     return chart
 
+}
+function atualizaG_linear(grafico, data) {
+
+    var meses = grafico.data.datasets[0].data
+    var dataItem = new Date(data.time);
+
+    var dataAtual = new Date();
+
+    if (dataItem.getFullYear() == dataAtual.getFullYear()) {
+        meses[dataItem.getMonth()] += Number(data.valor)
+        grafico.data.datasets[0].data = meses
+    }
+    grafico.update()
+}
+
+
+function grafico_barras() {
+    var ctx = document.getElementById("myBarChart");
+    var myLineChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [],
+            datasets: [{
+                label: "Gastos Anuais",
+                backgroundColor: "rgba(2,117,216,1)",
+                borderColor: "rgba(2,0,216,1)",
+                data: [],
+            }],
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    time: {
+                        unit: 'year'
+                    },
+                    gridLines: {
+                        display: false
+                    },
+                    ticks: {
+                        maxTicksLimit: 6
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                        max: 0,
+                        maxTicksLimit: 30
+                    },
+                    gridLines: {
+                        display: true
+                    }
+                }],
+            },
+            legend: {
+                display: false
+            }
+        }
+    });
+    return myLineChart
+}
+function atualizaG_barras (grafico, item) {
+    var anos = grafico.data.labels
+    var registro = grafico.data.datasets[0].data
+
+    var max = grafico.options.scales.yAxes[0].ticks.max
+    var maximo_array = Math.max.apply(null, registro);
+
+    var anoItem = moment(item.time).year()
+    var gasto = Number(item.valor)
+
+    if(anos.indexOf(anoItem) == -1){
+        anos.push(anoItem)
+        registro.push(0)
+    }
+
+    if (max < (maximo_array)) {
+        grafico.options.scales.yAxes[0].ticks.max += maximo_array  
+    }
+
+    registro[anos.indexOf(anoItem)] += gasto
+
+    grafico.data.labels = anos
+    grafico.data.datasets[0].data = registro
+    grafico.update()
 }

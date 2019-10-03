@@ -15,34 +15,35 @@ function adicionarGastos(tabela) {
                         var dataSetMax = Number(data.valor) + 50
                         graficoMax.max = dataSetMax
                         gIndex.update()
-                    
+
                     }
-                    
+
                     dias_gastos[dia_Semana] += Number(data.valor)
                     gIndex.data.datasets[0].data = dias_gastos
-                    
+
                     gIndex.update()
                 }
 
                 data.valor = Number(data.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                 tabela.rows.add([data]).draw();
 
-                var dNow = new Date();
-                var localidade = dNow.getDate() + '/' + (dNow.getMonth() + 1) + '/' + dNow.getFullYear() + ' ' + dNow.getHours() + ':' + dNow.getMinutes();
-                $("#atualizacao-tabela").text("Última atualização: " + localidade)
+
+                $(".atualizacao-tabela").each(function () {
+                    $(this).text("Última atualização: " + moment().format("D/M/Y, h:mm:ss a"))
+                })
             })
         }
     })
 };
 
-function itemInSemana(item){
+function itemInSemana(item) {
 
     var dataAtual = new Date();
-    dataAtual =  new Date(dataAtual.setHours(0, 0, 0, 0))
+    dataAtual = new Date(dataAtual.setHours(0, 0, 0, 0))
     while (dataAtual.getDay() != 0) { dataAtual.setDate(dataAtual.getDate() - 1) }
     var domingo = dataAtual.getTime()
     var sabado = dataAtual.setDate(dataAtual.getDate() + 6)
 
-    return  item >= domingo && item <= sabado
+    return item >= domingo && item <= sabado
 
 }
