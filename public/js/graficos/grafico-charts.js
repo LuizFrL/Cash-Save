@@ -1,25 +1,24 @@
 var g_Linha = grafico_linear()
 
 var g_Barras = grafico_barras()
+
+var g_Torta = grafico_torta()
+
 function carregarTabelas() {
-
-
 
     firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
             firebase.database().ref("/usuarios/" + user.uid + "/gastos").on("child_added", function (snapshot) {
                 var item = snapshot.val();
                 atualizaG_linear(g_Linha, item)
-
                 atualizaG_barras(g_Barras, item)
-
+                atualizaG_torta(g_Torta, item)
             })
-            
             var tabelas = $(".atualizacao-tabela")
             tabelas.each(function () {
                 $(this).text("Ultima Atualização: " + moment().format("D/M/Y, h:mm:ss a"));
             });
-            
+
         }
     });
 
@@ -92,7 +91,6 @@ function atualizaG_linear(grafico, data) {
     grafico.update()
 }
 
-
 function grafico_barras() {
     var ctx = document.getElementById("myBarChart");
     var myLineChart = new Chart(ctx, {
@@ -101,8 +99,8 @@ function grafico_barras() {
             labels: [],
             datasets: [{
                 label: "Gastos Anuais",
-                backgroundColor: "rgba(2,117,216,1)",
-                borderColor: "rgba(2,0,216,1)",
+                backgroundColor: [],
+                borderColor: [],
                 data: [],
             }],
         },
@@ -122,7 +120,7 @@ function grafico_barras() {
                 yAxes: [{
                     ticks: {
                         min: 0,
-                        max: 0,
+                        max: 1000,
                         maxTicksLimit: 30
                     },
                     gridLines: {
@@ -137,9 +135,11 @@ function grafico_barras() {
     });
     return myLineChart
 }
-function atualizaG_barras (grafico, item) {
+function atualizaG_barras(grafico, item) {
     var anos = grafico.data.labels
     var registro = grafico.data.datasets[0].data
+    var cor_barra = grafico.data.datasets[0].backgroundColor
+
 
     var max = grafico.options.scales.yAxes[0].ticks.max
     var maximo_array = Math.max.apply(null, registro);
@@ -147,18 +147,56 @@ function atualizaG_barras (grafico, item) {
     var anoItem = moment(item.time).year()
     var gasto = Number(item.valor)
 
-    if(anos.indexOf(anoItem) == -1){
+    if (anos.indexOf(anoItem) == -1) {
         anos.push(anoItem)
         registro.push(0)
+        cor_barra.push(gera_cor())
     }
-
     if (max < (maximo_array)) {
-        grafico.options.scales.yAxes[0].ticks.max += maximo_array  
+        grafico.options.scales.yAxes[0].ticks.max += maximo_array
+    }
+    registro[anos.indexOf(anoItem)] += gasto
+    grafico.update()
+}
+
+function grafico_torta() {
+    var ctx = document.getElementById("myPieChart");
+    var myPieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: [],
+            datasets: [{
+                data: [],
+                backgroundColor: [],
+            }],
+        },
+    });
+    return myPieChart
+}
+
+function gera_cor() {
+    var hexadecimais = '0123456789ABCDEF';
+    var cor = '#';
+    // Pega um número aleatório no array acima
+    for (var i = 0; i < 6; i++) {
+        //E concatena à variável cor
+        cor += hexadecimais[Math.floor(Math.random() * 16)];
+    }
+    return cor;
+}
+
+function atualizaG_torta(grafico, item) {
+    var locais = grafico.data.labels
+    var valores_por_local = grafico.data.datasets[0].data
+    var cores = grafico.data.datasets[0].backgroundColor
+
+    if (locais.indexOf(item.local) == -1) {
+        locais.push(item.local)
+        valores_por_local.push(0)
+        cores.push(gera_cor())
     }
 
-    registro[anos.indexOf(anoItem)] += gasto
-
-    grafico.data.labels = anos
-    grafico.data.datasets[0].data = registro
+    valores_por_local[locais.indexOf(item.local)] += Number(item.valor)
     grafico.update()
+
 }
