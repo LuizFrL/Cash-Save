@@ -12,28 +12,24 @@ var firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
         if (location.pathname == '/login.html') {
             window.location.pathname = '/index.html'
-
         }
-
         var idUsuario = user.uid
-
         firebase.database().ref('users/' + idUsuario).set({
             username: user.displayName,
             email: user.email,
             profile_picture: user.photoURL
         });
-
+        firebase.database().ref('usuarios/' + idUsuario + '/gastos/').on('child_removed', function (snapshot) {
+            removeG_index(snapshot.val())
+        })
     }
     else {
         if (location.pathname != '/login.html') {
-            debugger
             window.location.pathname = '/login.html'
-
         }
     }
 })
@@ -63,3 +59,4 @@ logout.click(() => {
         console.log(error);
     })
 });
+

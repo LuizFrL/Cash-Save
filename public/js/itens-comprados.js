@@ -1,4 +1,10 @@
 var gIndex = graficoIndex();
+function removeG_index(data){
+    var dia_Semana = new Date(data.time).getDay();    
+    gIndex.data.datasets[0].data[dia_Semana] -= Number(data.valor)
+    gIndex.update()
+}
+
 
 function adicionarGastos(tabela) {
     firebase.auth().onAuthStateChanged(user => {
@@ -6,6 +12,7 @@ function adicionarGastos(tabela) {
             $("#imagem-perfil").attr('src', user.photoURL)
             var dias_gastos = [0, 0, 0, 0, 0, 0, 0, 0]
             firebase.database().ref("/usuarios/" + user.uid + "/gastos").on("child_added", function (snapshot) {
+                var key = snapshot.key
                 var data = snapshot.val();
                 if (itemInSemana(data.time)) {
                     var dia_Semana = new Date(data.time).getDay()
@@ -15,20 +22,16 @@ function adicionarGastos(tabela) {
                         var dataSetMax = Number(data.valor) + 50
                         graficoMax.max = dataSetMax
                         gIndex.update()
-
                     }
-
                     dias_gastos[dia_Semana] += Number(data.valor)
                     gIndex.data.datasets[0].data = dias_gastos
-
                     gIndex.update()
                 }
-
                 data.valor = Number(data.valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                data['DT_RowId'] = key;
                 tabela.rows.add([data]).draw();
-
-
-                $(".atualizacao-tabela").each(function () {
+                removeItem(user)
+                $(".atualizacao-tabela").each(function () {            
                     $(this).text("Última atualização: " + moment().format("D/M/Y, h:mm:ss a"))
                 })
             })

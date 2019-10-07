@@ -4,8 +4,14 @@ var g_Barras = grafico_barras()
 
 var g_Torta = grafico_torta()
 
-function carregarTabelas() {
+function removeG_Charts(item){
+    item.valor = Number(item.valor) * -1
+    atualizaG_linear(g_Linha, item)
+    atualizaG_barras(g_Barras, item)
+    atualizaG_torta(g_Torta, item)
+}
 
+function carregarTabelas() {
     firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
             firebase.database().ref("/usuarios/" + user.uid + "/gastos").on("child_added", function (snapshot) {
@@ -14,14 +20,17 @@ function carregarTabelas() {
                 atualizaG_barras(g_Barras, item)
                 atualizaG_torta(g_Torta, item)
             })
+
+            firebase.database().ref("/usuarios/" + user.uid + "/gastos").on("child_removed", function (snapshot) {
+                removeG_Charts(snapshot.val())
+            })
+
             var tabelas = $(".atualizacao-tabela")
             tabelas.each(function () {
                 $(this).text("Ultima Atualização: " + moment().format("D/M/Y, h:mm:ss a"));
             });
-
         }
     });
-
 }
 
 function grafico_linear() {

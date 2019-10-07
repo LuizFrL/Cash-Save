@@ -23,8 +23,6 @@ evniar.click(function () {
             data: now.toLocaleString(),
             timeStamp : now.getTime() 
         }
-        console.log(data);
-        
         firebase.database().ref("/usuarios/" + user + "/gastos").push(data)
             .catch(error => {
                 console.log(error);
