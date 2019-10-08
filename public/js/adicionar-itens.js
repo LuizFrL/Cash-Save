@@ -13,7 +13,7 @@ evniar.click(function () {
             input.addClass('border border-danger')
         } else {
             input.removeClass('border border-danger')
-            data[input.data("firebase")] = input.val()
+            data[input.data("firebase")] = input.val().trim()
         }
     })
     if (Object.keys(data).length == 5) {

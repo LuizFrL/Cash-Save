@@ -14,6 +14,7 @@ function removeG_Charts(item){
 function carregarTabelas() {
     firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
+            $("#imagem-perfil").attr("src", user.photoURL)
             firebase.database().ref("/usuarios/" + user.uid + "/gastos").on("child_added", function (snapshot) {
                 var item = snapshot.val();
                 atualizaG_linear(g_Linha, item)
@@ -169,7 +170,7 @@ function atualizaG_barras(grafico, item) {
 }
 
 function grafico_torta() {
-    var ctx = document.getElementById("myPieChart");
+    var ctx = $("#grafico-torta");
     var myPieChart = new Chart(ctx, {
         type: 'pie',
         data: {
