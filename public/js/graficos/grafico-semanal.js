@@ -133,8 +133,6 @@ function grafico_linear() {
 function atualizaG_linear(grafico, data) {
     var dataItem = new Date(data.time);
     var hoje = new Date()
-    console.log(dataItem.getMonth() + ' HOJE ->' + hoje.getMonth());
-    debugger
     if (dataItem.getMonth() == hoje.getMonth()) {
         var semanas = grafico.data.datasets
         var inicio_mes = new Date(dataItem.getFullYear(), dataItem.getMonth(), 1)
