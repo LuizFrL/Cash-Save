@@ -44,7 +44,7 @@ function grafico_linear() {
                 pointHitRadius: 50,
                 pointBorderWidth: 2,
                 data: [0, 0, 0, 0, 0, 0, 0],
-            },{
+            }, {
                 label: "2º Sem - Gasto",
                 lineTension: 0.3,
                 backgroundColor: "#00000026",
@@ -131,19 +131,22 @@ function grafico_linear() {
 }
 
 function atualizaG_linear(grafico, data) {
-
-    var semanas = grafico.data.datasets
     var dataItem = new Date(data.time);
-    var inicio_mes = new Date(dataItem.getFullYear(), dataItem.getMonth(), 1)
+    var hoje = new Date()
+    console.log(dataItem.getMonth() + ' HOJE ->' + hoje.getMonth());
+    debugger
+    if (dataItem.getMonth() == hoje.getMonth()) {
+        var semanas = grafico.data.datasets
+        var inicio_mes = new Date(dataItem.getFullYear(), dataItem.getMonth(), 1)
 
-    var qtdsemana = 0
+        var qtdsemana = 0
 
-    for (let index = 0; index < dataItem.getDate(); index++) {
-        if (inicio_mes.getDay() == 0) { qtdsemana += 1 }
-        inicio_mes.setDate(inicio_mes.getDate() + 1)
+        for (let index = 0; index < dataItem.getDate(); index++) {
+            if (inicio_mes.getDay() == 0) { qtdsemana += 1 }
+            inicio_mes.setDate(inicio_mes.getDate() + 1)
+        }
+        semanas[qtdsemana].data[dataItem.getDay()] += Number(data.valor)
+        grafico.update()
     }
-    console.log(qtdsemana + ' inicio mes:' + inicio_mes + ' data item:' + dataItem);
-    
-    semanas[qtdsemana].data[dataItem.getDay()] += Number(data.valor)
-    grafico.update()
+
 }

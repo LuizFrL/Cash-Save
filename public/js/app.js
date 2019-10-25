@@ -25,7 +25,7 @@ firebase.auth().onAuthStateChanged(user => {
             profile_picture: user.photoURL
         });
         firebase.database().ref('usuarios/' + idUsuario + '/gastos/').on('child_removed', function (snapshot) {
-            removeG_index(snapshot.val())
+                removeG_index(snapshot.val())
         })
     }
     else {
